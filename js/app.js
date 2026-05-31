@@ -8,6 +8,7 @@ const app = {
     heroItems: [],
     menu: [],
     currentUser: null,
+    settings: {},
 
     benefits: [
         { title: "Super Fast Delivery",  desc: "Get your food hot and fresh in under 30 minutes, directly to your door.",      icon: "🚀", image: "https://images.unsplash.com/photo-1526367790999-0150786686a2?auto=format&fit=crop&w=1600" },
@@ -70,6 +71,7 @@ const app = {
     async loadSettings() {
         try {
             const settings = await API.get('/settings');
+            this.settings = settings;
             const bar = document.getElementById('announcement-bar');
             if (bar && settings.announcement_enabled === '1') {
                 const text1 = document.getElementById('marquee-text-1');
@@ -533,11 +535,27 @@ const app = {
 
     updateCartTotals() {
         const subtotal = this.cart.reduce((s, i) => s + i.price * i.qty, 0);
-        const tax      = subtotal * 0.10;
-        const total    = subtotal + tax;
+        const taxRate = parseFloat(this.settings.tax_rate || 10.0);
+        const deliveryEnabled = this.settings.delivery_enabled === '1';
+        const deliveryCharge = parseFloat(this.settings.delivery_charge || 50.0);
+        
+        const tax = subtotal * (taxRate / 100);
+        let total = subtotal + tax;
+        
         document.getElementById('cart-subtotal').textContent = `PKR ${subtotal.toFixed(2)}`;
-        document.getElementById('cart-tax').textContent      = `PKR ${tax.toFixed(2)}`;
-        document.getElementById('cart-total').textContent    = `PKR ${total.toFixed(2)}`;
+        document.getElementById('cart-tax').textContent = `PKR ${tax.toFixed(2)} (${taxRate}%)`;
+        
+        const deliveryEl = document.getElementById('cart-delivery-row');
+        if (deliveryEnabled) {
+            total += deliveryCharge;
+            if (deliveryEl) deliveryEl.style.display = 'flex';
+            const deliveryAmt = document.getElementById('cart-delivery');
+            if (deliveryAmt) deliveryAmt.textContent = `PKR ${deliveryCharge.toFixed(2)}`;
+        } else {
+            if (deliveryEl) deliveryEl.style.display = 'none';
+        }
+        
+        document.getElementById('cart-total').textContent = `PKR ${total.toFixed(2)}`;
     },
 
     // ===================================================

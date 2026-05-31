@@ -305,6 +305,27 @@
                     </form>
                 </div>
                 <div class="card">
+                    <div class="card-header"><h3>💳 Tax & Delivery</h3></div>
+                    <form id="billing-form" onsubmit="panel.saveBillingSettings(event)" style="padding:1.25rem">
+                        <div class="form-group">
+                            <label>Tax Rate (%)</label>
+                            <input type="number" step="0.01" min="0" id="tax-rate" placeholder="10.0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Enable Delivery Charges</label>
+                            <select id="delivery-enabled">
+                                <option value="1">Enabled</option>
+                                <option value="0">Disabled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Delivery Charge (PKR)</label>
+                            <input type="number" step="0.01" min="0" id="delivery-charge" placeholder="50.0" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top:10px">Save Billing Settings</button>
+                    </form>
+                </div>
+                <div class="card">
                     <div class="card-header"><h3>🔑 Change Password</h3></div>
                     <form id="pwd-form" onsubmit="panel.changePassword(event)" style="padding:1.25rem">
                         <div class="form-group">

@@ -287,7 +287,7 @@ const panel = {
                 <tbody>${rows}</tbody>
                 <tfoot>
                     <tr><td colspan="3" style="text-align:right;padding:.6rem 1rem;color:var(--muted)">Subtotal</td><td style="padding:.6rem 1rem">PKR ${parseFloat(o.subtotal).toFixed(2)}</td></tr>
-                    <tr><td colspan="3" style="text-align:right;padding:.4rem 1rem;color:var(--muted)">Tax (10%)</td><td style="padding:.4rem 1rem">PKR ${parseFloat(o.tax).toFixed(2)}</td></tr>
+                    <tr><td colspan="3" style="text-align:right;padding:.4rem 1rem;color:var(--muted)">Tax</td><td style="padding:.4rem 1rem">PKR ${parseFloat(o.tax).toFixed(2)}</td></tr>
                     <tr><td colspan="3" style="text-align:right;padding:.6rem 1rem;font-weight:700">TOTAL</td><td style="padding:.6rem 1rem;font-weight:800;font-size:1.05rem;color:var(--accent)">PKR ${parseFloat(o.total).toFixed(2)}</td></tr>
                 </tfoot>
             </table>
@@ -344,7 +344,7 @@ this.renderOrdersTable();
                 ${itemRows}
                 <div class="slip-div" style="margin-top:.5rem">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
                 <div class="slip-row"><span>Subtotal:</span><span>PKR ${parseFloat(o.subtotal).toFixed(2)}</span></div>
-                <div class="slip-row"><span>Tax (10%):</span><span>PKR ${parseFloat(o.tax).toFixed(2)}</span></div>
+                <div class="slip-row"><span>Tax:</span><span>PKR ${parseFloat(o.tax).toFixed(2)}</span></div>
                 <div class="slip-total-line"><span>TOTAL:</span><span>PKR ${parseFloat(o.total).toFixed(2)}</span></div>
                 <div class="slip-div">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
                 <div class="slip-status-line">Status: ${o.status.toUpperCase()}</div>
@@ -674,6 +674,9 @@ this.renderOrdersTable();
             const settings = await API.get('/settings');
             document.getElementById('announcement-enabled').value = settings.announcement_enabled || '1';
             document.getElementById('announcement-text').value = settings.announcement_text || '';
+            if(document.getElementById('tax-rate')) document.getElementById('tax-rate').value = settings.tax_rate || '10.0';
+            if(document.getElementById('delivery-enabled')) document.getElementById('delivery-enabled').value = settings.delivery_enabled || '0';
+            if(document.getElementById('delivery-charge')) document.getElementById('delivery-charge').value = settings.delivery_charge || '50.0';
         } catch (err) { this.toast(err.message, 'error'); }
     },
 
@@ -688,6 +691,22 @@ this.renderOrdersTable();
                 announcement_text: text
             });
             this.toast('Announcement settings saved!', 'success');
+        } catch (err) { this.toast(err.message, 'error'); }
+    },
+
+    async saveBillingSettings(e) {
+        e.preventDefault();
+        const taxRate = document.getElementById('tax-rate').value;
+        const deliveryEnabled = document.getElementById('delivery-enabled').value;
+        const deliveryCharge = document.getElementById('delivery-charge').value;
+
+        try {
+            await API.put('/settings', {
+                tax_rate: taxRate,
+                delivery_enabled: deliveryEnabled,
+                delivery_charge: deliveryCharge
+            });
+            this.toast('Billing settings saved!', 'success');
         } catch (err) { this.toast(err.message, 'error'); }
     },
 

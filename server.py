@@ -131,6 +131,9 @@ def init_db():
     if not c.execute("SELECT key FROM settings WHERE key = 'announcement_enabled'").fetchone():
         c.execute("INSERT INTO settings (key, value) VALUES (?,?)", ('announcement_enabled', '1'))
         c.execute("INSERT INTO settings (key, value) VALUES (?,?)", ('announcement_text', '🔥 Welcome to CHUNKY BITES! Enjoy Super Fast Delivery across the city. | 🍔 Try our new Cyber Burger! | 🚚 Free Delivery on orders over PKR 1000! | 🕒 Open 24/7 for your midnight cravings!'))
+        c.execute("INSERT INTO settings (key, value) VALUES (?,?)", ('tax_rate', '10.0'))
+        c.execute("INSERT INTO settings (key, value) VALUES (?,?)", ('delivery_enabled', '0'))
+        c.execute("INSERT INTO settings (key, value) VALUES (?,?)", ('delivery_charge', '50.0'))
 
     # Seed admin user
     admin = c.execute('SELECT id FROM users WHERE email = ?', ('admin@chunky.com',)).fetchone()
@@ -438,10 +441,19 @@ def place_order():
     data = request.get_json()
     conn = get_db()
 
+    settings_rows = conn.execute('SELECT key, value FROM settings').fetchall()
+    settings = {row['key']: row['value'] for row in settings_rows}
+    tax_rate = float(settings.get('tax_rate', 10.0))
+    delivery_enabled = settings.get('delivery_enabled', '0') == '1'
+    delivery_charge = float(settings.get('delivery_charge', 50.0))
+
     items = data.get('items', [])
     subtotal = sum(float(i['price']) * int(i['qty']) for i in items)
-    tax = round(subtotal * 0.10, 2)
+    tax = round(subtotal * (tax_rate / 100.0), 2)
     total = round(subtotal + tax, 2)
+    if delivery_enabled:
+        total += delivery_charge
+        
     subtotal = round(subtotal, 2)
     order_id = 'ORD-' + str(uuid.uuid4())[:8].upper()
 
