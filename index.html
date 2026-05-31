@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHUNKY BITES | Premium Futuristic Dining</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Google Fonts for modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Announcement Bar -->
+        <div id="announcement-bar" class="announcement-bar glass-panel" style="display:none;">
+            <div class="marquee-content">
+                <span class="marquee-text" id="marquee-text-1"></span>
+                <span class="marquee-text" id="marquee-text-2"></span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="glass-nav floating-pill">
+            <div class="logo">
+                <span class="text-neon">🍔 CHUNKY</span> BITES
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="#" onclick="app.navigate('home')">Home</a></li>
+                <li><a href="#" onclick="app.navigate('menu')">Menu</a></li>
+                <li id="nav-orders" style="display:none;"><a href="#" onclick="app.navigate('orders')">Orders</a></li>
+                <li id="nav-login"><a href="#" onclick="app.navigate('login')">👤 Login</a></li>
+                <li id="nav-admin" style="display:none;"><a href="admin.html">⚙️ Admin</a></li>
+                <li id="nav-logout" style="display:none;"><a href="#" onclick="app.logout()">Logout</a></li>
+            </ul>
+            <div id="nav-cart" class="cart-pill">
+                <button onclick="app.navigate('cart')" class="btn-cart">🛒 Cart <span id="cart-count">0</span></button>
+            </div>
+            <div class="hamburger" onclick="app.toggleMobileNav()">
+                <span></span><span></span><span></span>
+            </div>
+        </nav>
+
+        <main id="main-content">
+            <!-- Home View -->
+            <section id="view-home" class="view active-view">
+                <div class="hero-split">
+                    <div class="hero-left">
+                        <h1 class="hero-title" id="hero-title">Find your <span class="text-neon">Favorite Food</span></h1>
+                        <p class="hero-desc" id="hero-desc">Experience culinary perfection with our premium fast food.</p>
+                        <div class="hero-actions">
+                            <button class="btn-primary" onclick="app.navigate('menu')">Buy Now</button>
+                        </div>
+                        
+                        <div class="hero-thumbnails" id="hero-thumbnails">
+                            <!-- Dynamically injected thumbnails here -->
+                        </div>
+                    </div>
+                    
+                    <div class="hero-right">
+                        <div class="hero-shape"></div>
+                        <img id="hero-main-img" src="" alt="Featured Food">
+                    </div>
+                </div>
+                <div class="featured-section">
+                    <h2>Popular Now</h2>
+                    <div id="featured-items" class="card-grid"></div>
+                </div>
+
+                <!-- Benefits & Services Section -->
+                <div class="benefits-section" id="benefits-section">
+                    <!-- Crossfade Background Images -->
+                    <div class="benefits-bg-layer">
+                        <img id="benefits-bg-img-a" class="benefits-bg-img visible-bg" src="" alt="Benefit">
+                        <img id="benefits-bg-img-b" class="benefits-bg-img" src="" alt="Benefit">
+                    </div>
+                    <!-- Cinematic Overlay -->
+                    <div class="benefits-overlay"></div>
+                    <!-- Content Grid -->
+                    <div class="benefits-content-grid">
+                        <!-- Left: Flip Card -->
+                        <div class="benefits-left">
+                            <div class="benefit-card-outer" id="benefit-card" onclick="app.flipBenefit()">
+                                <div class="benefit-card-num" id="benefit-card-num">01</div>
+                                <div class="benefit-card-icon" id="benefit-card-icon">🚀</div>
+                                <h3 class="benefit-card-title" id="benefit-card-title">Super Fast Delivery</h3>
+                                <p class="benefit-card-desc" id="benefit-card-desc">Get your food hot and fresh in under 30 minutes, directly to your door.</p>
+                                <div class="benefit-card-flip-hint">Click card or scroll to flip →</div>
+                            </div>
+                        </div>
+                        <!-- Right: Title + Dots -->
+                        <div class="benefits-right">
+                            <span class="benefits-label">✦ OUR PROMISE</span>
+                            <h2 class="benefits-heading">Benefits &amp;<br>Services</h2>
+                            <p class="benefits-sub">Discover why thousands of customers choose Chunky Bites every single day.</p>
+                            <div class="benefits-indicator" id="benefits-dots"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Menu View -->
+            <section id="view-menu" class="view">
+                <div class="page-header">
+                    <h2>Our Menu</h2>
+                    <div class="menu-search-container" style="margin-top: 15px; margin-bottom: 15px; text-align: center;">
+                        <input type="text" id="menu-search-input" placeholder="Search for food..." oninput="app.renderMenu()" style="width: 100%; max-width: 400px; padding: 12px 20px; border-radius: 25px; border: 1px solid rgba(255, 155, 69, 0.5); background: rgba(255, 255, 255, 0.1); color: var(--text-main); font-family: var(--font-main); font-size: 1rem; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                    </div>
+                    <div class="category-filters" id="category-filters">
+                        <!-- Filters populated dynamically -->
+                    </div>
+                </div>
+                <div id="menu-items" class="card-grid"></div>
+            </section>
+
+            <!-- Cart View -->
+            <section id="view-cart" class="view">
+                <h2>Your Cart</h2>
+                <div class="cart-container">
+                    <div id="cart-items" class="cart-items-list">
+                        <!-- Cart items populated dynamically -->
+                    </div>
+                    <div class="cart-summary glass-panel">
+                        <h3>Summary</h3>
+                        <div class="summary-line"><span>Subtotal:</span> <span id="cart-subtotal">PKR 0.00</span></div>
+                        <div class="summary-line"><span>Tax (10%):</span> <span id="cart-tax">PKR 0.00</span></div>
+                        <div class="summary-line total"><span>Total:</span> <span id="cart-total">PKR 0.00</span></div>
+                        <button class="btn-primary full-width" onclick="app.navigate('checkout')">Proceed to Checkout</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Checkout View -->
+            <section id="view-checkout" class="view">
+                <div class="checkout-container glass-panel">
+                    <h2>Checkout</h2>
+                    <form id="checkout-form" onsubmit="app.placeOrder(event); return false;">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="checkout-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Delivery Address</label>
+                            <textarea id="checkout-address" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="checkout-phone" required>
+                        </div>
+                        <button type="submit" class="btn-primary full-width">Place Order</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Login View -->
+            <section id="view-login" class="view">
+                <div class="auth-container glass-panel">
+                    <h2 id="auth-title">Login</h2>
+                    <form id="auth-form" onsubmit="app.handleAuth(event); return false;">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="auth-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="auth-password" required>
+                        </div>
+                        <div class="form-group signup-only" style="display:none;">
+                            <label>Full Name</label>
+                            <input type="text" id="auth-name">
+                        </div>
+                        <div class="form-group signup-only" style="display:none;">
+                            <label>Delivery Address</label>
+                            <textarea id="auth-address"></textarea>
+                        </div>
+                        <div class="form-group signup-only" style="display:none;">
+                            <label>Phone Number</label>
+                            <input type="tel" id="auth-phone">
+                        </div>
+                        <button type="submit" class="btn-primary full-width" id="auth-submit">Login</button>
+                    </form>
+                    <p class="auth-switch">
+                        <span id="auth-switch-text">Don't have an account?</span> 
+                        <a href="#" onclick="app.toggleAuthMode()">Sign up</a>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Orders Tracking View -->
+            <section id="view-orders" class="view">
+                <h2>Your Orders</h2>
+                <div id="user-orders" class="orders-list"></div>
+            </section>
+
+            <!-- Admin View -->
+            <section id="view-admin" class="view">
+                <div class="admin-dashboard">
+                    <aside class="admin-sidebar glass-panel">
+                        <h3>Admin Panel</h3>
+                        <ul>
+                            <li><a href="#" onclick="admin.showTab('admin-menu')">Manage Menu</a></li>
+                            <li><a href="#" onclick="admin.showTab('admin-orders')">Manage Orders</a></li>
+                        </ul>
+                    </aside>
+                    <div class="admin-content glass-panel">
+                        
+                        <!-- Admin Manage Menu -->
+                        <div id="admin-menu" class="admin-tab active-tab">
+                            <div class="admin-header">
+                                <h2>Menu Items</h2>
+                                <button class="btn-primary" onclick="admin.openItemModal()">+ Add Item</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Image</th>
+                                            <th>Name</th>
+                                            <th>Category</th>
+                                            <th>Price</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-menu-table"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Admin Manage Orders -->
+                        <div id="admin-orders" class="admin-tab">
+                            <h2>Orders</h2>
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th>Items</th>
+                                            <th>Total</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-orders-table"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Modals -->
+        <div id="item-modal" class="modal">
+            <div class="modal-content glass-panel">
+                <span class="close" onclick="admin.closeItemModal()">&times;</span>
+                <h2 id="modal-title">Add Menu Item</h2>
+                <form id="item-form" onsubmit="admin.saveItem(event)">
+                    <input type="hidden" id="item-id">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="item-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="item-desc" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="item-category" required>
+                            <option value="Pizza">Pizza</option>
+                            <option value="Burger">Burger</option>
+                            <option value="Broast">Broast</option>
+                            <option value="Drinks">Drinks</option>
+                            <option value="Desserts">Desserts</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (PKR)</label>
+                        <input type="number" step="0.01" id="item-price" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="url" id="item-image" required placeholder="https://example.com/image.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="item-status">
+                            <option value="active">Active (Visible)</option>
+                            <option value="hidden">Hidden</option>
+                            <option value="Out of Stock">Out of Stock</option>
+                            <option value="EID Out of Stock">EID Out of Stock</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Save Item</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Product Detail Modal -->
+        <div id="product-detail-modal" class="modal">
+            <div class="modal-content glass-panel product-detail-content">
+                <span class="close" onclick="app.closeDetailModal()">&times;</span>
+                <div class="product-detail-grid">
+                    <img id="detail-image" src="" alt="Product" class="detail-image">
+                    <div class="product-detail-info">
+                        <h2 id="detail-title">Product Name</h2>
+                        <p class="text-muted" id="detail-category">Category</p>
+                        <p id="detail-desc" class="detail-desc">Description</p>
+                        <h3 id="detail-price" class="text-neon">PKR 0.00</h3>
+                        <button class="btn-primary full-width mt-20" id="detail-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="glass-footer">
+            <p>&copy; 2026 Chunky Bites. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

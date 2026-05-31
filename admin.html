@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel — CHUNKY BITES</title>
+    <meta name="description" content="CHUNKY BITES Admin Control Panel">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- ============================================================
+     LOGIN SCREEN (shown when not authenticated)
+============================================================ -->
+<div id="login-screen">
+    <div class="login-wrap">
+        <div class="login-card">
+            <div class="login-brand">
+                <span class="brand-icon">🍔</span>
+                <h1>CHUNKY BITES</h1>
+                <p>Admin Control Panel</p>
+            </div>
+            <form id="admin-login-form" onsubmit="panel.login(event)">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="login-email" placeholder="admin@chunky.com" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary full-w" id="login-btn">Login to Admin</button>
+                <div id="login-error" class="error-msg"></div>
+            </form>
+            <p style="text-align:center;margin-top:1.5rem;font-size:.8rem;color:var(--muted)">
+                Default: admin@chunky.com / admin123
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     ADMIN APP (shown when authenticated)
+============================================================ -->
+<div id="admin-app" style="display:none">
+
+    <!-- SIDEBAR -->
+    <aside id="admin-sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-logo-icon">🍔</div>
+            <div class="brand-text">
+                <div class="brand-name">CHUNKY BITES</div>
+                <div class="brand-sub">Admin Panel</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">MAIN</div>
+            <a class="nav-item active" data-tab="dashboard" href="#">
+                <span class="nav-icon">📊</span> Dashboard
+            </a>
+            <a class="nav-item" data-tab="orders" href="#">
+                <span class="nav-icon">📋</span> Orders
+                <span class="nav-badge" id="pending-badge" style="display:none">0</span>
+            </a>
+
+            <div class="nav-section-label" style="margin-top:.5rem">CATALOGUE</div>
+            <a class="nav-item" data-tab="menu" href="#">
+                <span class="nav-icon">🍔</span> Menu Items
+            </a>
+            <a class="nav-item" data-tab="categories" href="#">
+                <span class="nav-icon">🗂️</span> Categories
+            </a>
+
+            <div class="nav-section-label" style="margin-top:.5rem">PEOPLE</div>
+            <a class="nav-item" data-tab="users" href="#">
+                <span class="nav-icon">👥</span> Users
+            </a>
+
+            <div class="nav-section-label" style="margin-top:.5rem">SYSTEM</div>
+            <a class="nav-item" data-tab="settings" href="#">
+                <span class="nav-icon">⚙️</span> Settings
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-user-card">
+                <div class="user-avatar" id="sidebar-avatar">A</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebar-name">Admin</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+            </div>
+            <a class="nav-item" href="index.html">
+                <span class="nav-icon">🏪</span> View Store
+            </a>
+            <a class="nav-item" href="#" onclick="panel.logout()">
+                <span class="nav-icon">🚪</span> Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main id="admin-main">
+
+        <!-- TOPBAR -->
+        <div id="admin-topbar">
+            <div class="topbar-left">
+                <h1 id="page-title">Dashboard</h1>
+            </div>
+            <div class="topbar-right">
+                <div class="server-status">
+                    <div class="server-dot"></div>
+                    localhost:5000
+                </div>
+                <div class="topbar-user" id="topbar-user">👤 Admin</div>
+            </div>
+        </div>
+
+        <!-- ======================== DASHBOARD TAB ======================== -->
+        <div id="tab-dashboard" class="admin-tab active">
+            <div class="stats-grid">
+                <div class="stat-card c-orange">
+                    <div class="stat-icon-wrap">📋</div>
+                    <div>
+                        <div class="stat-value" id="s-orders">–</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                </div>
+                <div class="stat-card c-green">
+                    <div class="stat-icon-wrap">💰</div>
+                    <div>
+                        <div class="stat-value" id="s-revenue">–</div>
+                        <div class="stat-label">Revenue</div>
+                    </div>
+                </div>
+                <div class="stat-card c-blue">
+                    <div class="stat-icon-wrap">👥</div>
+                    <div>
+                        <div class="stat-value" id="s-users">–</div>
+                        <div class="stat-label">Customers</div>
+                    </div>
+                </div>
+                <div class="stat-card c-purple">
+                    <div class="stat-icon-wrap">🍔</div>
+                    <div>
+                        <div class="stat-value" id="s-items">–</div>
+                        <div class="stat-label">Active Items</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-row">
+                <div class="card">
+                    <div class="card-header"><h3>📦 Order Status</h3></div>
+                    <div class="status-grid" id="status-grid">
+                        <div class="loader"><div class="spinner"></div></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>🕐 Recent Orders</h3>
+                        <button class="btn btn-ghost" style="padding:.35rem .75rem;font-size:.78rem" onclick="panel.switchTab('orders')">View All</button>
+                    </div>
+                    <div id="recent-orders-list">
+                        <div class="loader"><div class="spinner"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================== ORDERS TAB ======================== -->
+        <div id="tab-orders" class="admin-tab">
+            <div class="tab-header">
+                <h2>📋 Manage Orders</h2>
+                <div class="tab-controls">
+                    <select class="filter-sel" id="orders-status-filter" onchange="panel.renderOrdersTable()">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Preparing">Preparing</option>
+                        <option value="Out for Delivery">Out for Delivery</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="Out of Stock">Out of Stock</option>
+                        <option value="EID Out of Stock">EID Out of Stock</option>
+                    </select>
+                    <button class="btn btn-ghost" onclick="panel.loadOrders()">🔄 Refresh</button>
+                </div>
+            </div>
+            <div class="card table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-tbody"><tr><td colspan="7" class="empty-cell"><div class="spinner" style="margin:0 auto"></div></td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ======================== MENU TAB ======================== -->
+        <div id="tab-menu" class="admin-tab">
+            <div class="tab-header">
+                <h2>🍔 Menu Items</h2>
+                <div class="tab-controls">
+                    <select class="filter-sel" id="menu-cat-filter" onchange="panel.renderMenuTable()">
+                        <option value="">All Categories</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="panel.openMenuModal()">+ Add Item</button>
+                </div>
+            </div>
+            <div class="card table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="menu-tbody"><tr><td colspan="6" class="empty-cell"><div class="spinner" style="margin:0 auto"></div></td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ======================== CATEGORIES TAB ======================== -->
+        <div id="tab-categories" class="admin-tab">
+            <div class="tab-header">
+                <h2>🗂️ Categories</h2>
+                <button class="btn btn-primary" onclick="panel.openCatModal()">+ Add Category</button>
+            </div>
+            <div class="card table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width:60px">Icon</th>
+                            <th>Name</th>
+                            <th>Sort Order</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categories-tbody"><tr><td colspan="4" class="empty-cell"><div class="spinner" style="margin:0 auto"></div></td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ======================== USERS TAB ======================== -->
+        <div id="tab-users" class="admin-tab">
+            <div class="tab-header">
+                <h2>👥 User Management</h2>
+                <button class="btn btn-ghost" onclick="panel.loadUsers()">🔄 Refresh</button>
+            </div>
+            <div class="card table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Orders</th>
+                            <th>Spent</th>
+                            <th>Joined</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody"><tr><td colspan="9" class="empty-cell"><div class="spinner" style="margin:0 auto"></div></td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ======================== SETTINGS TAB ======================== -->
+        <div id="tab-settings" class="admin-tab">
+            <div class="tab-header"><h2>⚙️ Settings</h2></div>
+            <div class="settings-grid">
+                <div class="card">
+                    <div class="card-header"><h3>📢 Announcement Bar</h3></div>
+                    <form id="announcement-form" onsubmit="panel.saveAnnouncementSettings(event)" style="padding:1.25rem">
+                        <div class="form-group">
+                            <label>Enable Announcement Bar</label>
+                            <select id="announcement-enabled">
+                                <option value="1">Enabled</option>
+                                <option value="0">Disabled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Scrolling Text (Marquee)</label>
+                            <textarea id="announcement-text" rows="4" placeholder="Enter scrolling text here..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top:10px">Save Announcement Settings</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3>🔑 Change Password</h3></div>
+                    <form id="pwd-form" onsubmit="panel.changePassword(event)" style="padding:1.25rem">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" id="pwd-current" required placeholder="Current password">
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" id="pwd-new" required placeholder="Min 6 characters">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" id="pwd-confirm" required placeholder="Repeat new password">
+                        </div>
+                        <button type="submit" class="btn btn-primary full-w">Update Password</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3>ℹ️ System Info</h3></div>
+                    <div class="info-row">
+                        <span class="info-label">Admin Email</span>
+                        <span id="info-email" style="font-weight:600">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Backend Server</span>
+                        <span class="badge badge-green">localhost:5000 ✓</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Database</span>
+                        <span class="badge badge-green">SQLite Connected</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Version</span>
+                        <span class="badge badge-blue">v2.0.0</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Store Link</span>
+                        <a href="index.html" style="color:var(--accent);text-decoration:none;font-weight:600">Open Store →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- ============================================================
+     MODALS
+============================================================ -->
+
+<!-- Menu Item Modal -->
+<div id="modal-menu" class="modal">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3 id="menu-modal-title">Add Menu Item</h3>
+            <button class="close-btn" onclick="panel.closeMenuModal()">×</button>
+        </div>
+        <form id="menu-item-form" onsubmit="panel.saveMenuItem(event)">
+            <div class="modal-body">
+                <input type="hidden" id="mi-id">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Item Name *</label>
+                        <input type="text" id="mi-name" required placeholder="e.g. Mega Burger">
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="mi-category" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Price ($) *</label>
+                        <input type="number" step="0.01" min="0" id="mi-price" required placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="mi-status">
+                            <option value="active">✅ Active (Visible)</option>
+                            <option value="hidden">🚫 Hidden</option>
+                            <option value="Out of Stock">❌ Out of Stock</option>
+                            <option value="EID Out of Stock">❌ EID Out of Stock</option>
+                        </select>
+                    </div>
+                    <div class="form-group span-2">
+                        <label>Description</label>
+                        <textarea id="mi-desc" rows="2" placeholder="Short description of the item..."></textarea>
+                    </div>
+                    <div class="form-group span-2">
+                        <label>Image URL</label>
+                        <input type="url" id="mi-image" placeholder="https://example.com/image.jpg">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button type="button" class="btn btn-outline" onclick="panel.closeMenuModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Item</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Category Modal -->
+<div id="modal-cat" class="modal">
+    <div class="modal-box sm">
+        <div class="modal-head">
+            <h3 id="cat-modal-title">Add Category</h3>
+            <button class="close-btn" onclick="panel.closeCatModal()">×</button>
+        </div>
+        <form id="cat-form" onsubmit="panel.saveCategory(event)">
+            <div class="modal-body">
+                <input type="hidden" id="cat-id">
+                <div class="form-group">
+                    <label>Icon (emoji)</label>
+                    <input type="text" id="cat-icon" placeholder="🍕" maxlength="4" style="font-size:1.5rem;text-align:center">
+                </div>
+                <div class="form-group">
+                    <label>Category Name *</label>
+                    <input type="text" id="cat-name" required placeholder="e.g. Pizza">
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button type="button" class="btn btn-outline" onclick="panel.closeCatModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Order Detail Modal -->
+<div id="modal-order" class="modal">
+    <div class="modal-box lg">
+        <div class="modal-head">
+            <h3 id="order-modal-title">Order Details</h3>
+            <button class="close-btn" onclick="panel.closeOrderModal()">×</button>
+        </div>
+        <div class="modal-body" id="order-detail-body"><!-- dynamic --></div>
+        <div class="modal-foot">
+            <button class="btn btn-outline" onclick="panel.closeOrderModal()">Close</button>
+            <button class="btn btn-ghost" onclick="panel.printCurrentOrder()">🖨️ Print Slip</button>
+        </div>
+    </div>
+</div>
+
+<!-- Print Slip Modal -->
+<div id="modal-print" class="modal">
+    <div class="modal-box sm">
+        <div class="modal-head no-print">
+            <h3>🖨️ Print Order Slip</h3>
+            <button class="close-btn" onclick="panel.closePrintModal()">×</button>
+        </div>
+        <div class="modal-body" id="print-slip-body"><!-- dynamic --></div>
+        <div class="modal-foot no-print">
+            <button class="btn btn-outline" onclick="panel.closePrintModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Print Now</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script src="js/api.js"></script>
+<script src="js/admin-panel.js"></script>
+</body>
+</html>
