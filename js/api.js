@@ -1,6 +1,6 @@
 // js/api.js — Shared API Client for CHUNKY BITES
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://chunkybitesapi.pythonanywhere.com/api';
 
 const API = {
     async request(method, endpoint, data = null) {
