@@ -34,7 +34,19 @@ CORS(app, supports_credentials=True, origins=['*'],
      allow_headers=['Content-Type', 'Authorization'],
      methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database.db')
+import shutil
+
+if os.environ.get('VERCEL'):
+    # Vercel is read-only except for /tmp
+    DB_PATH = '/tmp/database.db'
+    original_db = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database.db')
+    if not os.path.exists(DB_PATH) and os.path.exists(original_db):
+        try:
+            shutil.copy2(original_db, DB_PATH)
+        except Exception:
+            pass
+else:
+    DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database.db')
 
 # ==================== DATABASE ====================
 
