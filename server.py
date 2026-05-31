@@ -24,6 +24,12 @@ app.config.update(
     SESSION_COOKIE_SECURE=True,
 )
 
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # Return JSON instead of HTML for any unhandled exceptions
+    import traceback
+    return jsonify({'error': str(e), 'trace': traceback.format_exc()}), 500
+
 CORS(app, supports_credentials=True, origins=['*'],
      allow_headers=['Content-Type', 'Authorization'],
      methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
