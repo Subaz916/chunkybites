@@ -1,9 +1,9 @@
 // js/api.js — Shared API Client for CHUNKY BITES
 
-const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' || window.location.protocol === 'file:';
+const isLocal = window.location.protocol === 'file:' || ((window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') && window.location.port !== '5000');
 const API_BASE = isLocal 
     ? 'http://127.0.0.1:5000/api' 
-    : 'https://chunkybitesapi.pythonanywhere.com/api';
+    : '/api';
 
 const API = {
     async request(method, endpoint, data = null) {
