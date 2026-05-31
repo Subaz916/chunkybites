@@ -10,11 +10,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 import uuid
 import os
+import jwt as pyjwt
 from datetime import datetime, timedelta
 
 app = Flask(__name__, static_folder='.', static_url_path='')
 app.secret_key = 'chunky-bites-super-secret-2026-xK9mP'
-app.permanent_session_lifetime = timedelta(days=7)
+JWT_SECRET = 'chunky-bites-jwt-secret-2026-xK9mP-jwt'
+JWT_ALGORITHM = 'HS256'
+JWT_EXPIRY_DAYS = 30
+
+app.config.update(
+    SESSION_COOKIE_SAMESITE='None',
+    SESSION_COOKIE_SECURE=True,
+)
 
 CORS(app, supports_credentials=True, origins=['*'],
      allow_headers=['Content-Type', 'Authorization'],
