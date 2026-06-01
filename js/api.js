@@ -10,7 +10,8 @@ const API = {
         const options = {
             method,
             credentials: 'include',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            cache: 'no-store'
         };
         if (data) options.body = JSON.stringify(data);
 
