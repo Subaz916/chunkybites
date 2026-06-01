@@ -72,6 +72,8 @@ const app = {
         try {
             const settings = await API.get('/settings');
             this.settings = settings;
+
+            // Announcement bar
             const bar = document.getElementById('announcement-bar');
             if (bar && settings.announcement_enabled === '1') {
                 const text1 = document.getElementById('marquee-text-1');
@@ -84,8 +86,71 @@ const app = {
                 bar.style.display = 'none';
                 document.body.classList.remove('has-announcement-bar');
             }
+
+            // Store closed overlay
+            const storeOpen = settings.store_open !== '0';
+            this._setStoreClosed(!storeOpen);
+
+            // Deliveries stopped banner
+            const deliveriesStopped = settings.deliveries_stopped === '1';
+            this._setDeliveriesStopped(deliveriesStopped);
+
         } catch (err) {
             console.error('Failed to load settings:', err);
+        }
+    },
+
+    _setStoreClosed(isClosed) {
+        let overlay = document.getElementById('store-closed-overlay');
+        if (isClosed) {
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'store-closed-overlay';
+                overlay.innerHTML = `
+                    <div class="sc-overlay-box">
+                        <div class="sc-overlay-icon">🔒</div>
+                        <h2 class="sc-overlay-title">We're Closed Right Now</h2>
+                        <p class="sc-overlay-msg">CHUNKY BITES is temporarily closed. We'll be back very soon!</p>
+                        <div class="sc-overlay-badge">🍔 See you soon!</div>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+                requestAnimationFrame(() => overlay.classList.add('visible'));
+            }
+            document.body.classList.add('store-is-closed');
+        } else {
+            if (overlay) {
+                overlay.classList.remove('visible');
+                setTimeout(() => overlay.remove(), 500);
+            }
+            document.body.classList.remove('store-is-closed');
+        }
+    },
+
+    _setDeliveriesStopped(isStopped) {
+        let banner = document.getElementById('deliveries-stopped-banner');
+        if (isStopped) {
+            if (!banner) {
+                banner = document.createElement('div');
+                banner.id = 'deliveries-stopped-banner';
+                banner.innerHTML = `
+                    <span>⛔</span>
+                    <span><strong>Deliveries Temporarily Paused</strong> — We're not accepting delivery orders right now. Please check back soon!</span>
+                    <button onclick="this.parentElement.style.display='none'">✕</button>
+                `;
+                const annBar = document.getElementById('announcement-bar');
+                if (annBar && annBar.nextSibling) {
+                    annBar.parentNode.insertBefore(banner, annBar.nextSibling);
+                } else {
+                    document.body.prepend(banner);
+                }
+                requestAnimationFrame(() => banner.classList.add('visible'));
+            }
+        } else {
+            if (banner) {
+                banner.classList.remove('visible');
+                setTimeout(() => banner.remove(), 400);
+            }
         }
     },
 

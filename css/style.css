@@ -1211,3 +1211,132 @@ footer {
         padding: 20px;
     }
 }
+
+/* ===================================
+   STORE CLOSED OVERLAY
+=================================== */
+#store-closed-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    transition: opacity .5s ease;
+}
+
+#store-closed-overlay.visible {
+    opacity: 1;
+}
+
+.sc-overlay-box {
+    text-align: center;
+    max-width: 480px;
+    animation: scOverlayIn .6s cubic-bezier(.22,1,.36,1) forwards;
+}
+
+@keyframes scOverlayIn {
+    from { opacity: 0; transform: scale(.85) translateY(30px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.sc-overlay-icon {
+    font-size: 5rem;
+    display: block;
+    margin-bottom: 1.5rem;
+    animation: scIconBounce 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px rgba(213,69,27,.6));
+}
+
+@keyframes scIconBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25%       { transform: translateY(-12px) rotate(-5deg); }
+    75%       { transform: translateY(-6px) rotate(3deg); }
+}
+
+.sc-overlay-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: #F4E7E1;
+    margin-bottom: 1rem;
+    letter-spacing: -0.5px;
+    text-shadow: 0 0 40px rgba(213,69,27,.5);
+}
+
+.sc-overlay-msg {
+    font-size: 1.1rem;
+    color: rgba(244,231,225,0.7);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+}
+
+.sc-overlay-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #D5451B, #FF9B45);
+    color: white;
+    padding: .75rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: .5px;
+    box-shadow: 0 8px 32px rgba(213,69,27,.5);
+    animation: scBadgePulse 2s ease-in-out infinite;
+}
+
+@keyframes scBadgePulse {
+    0%, 100% { box-shadow: 0 8px 32px rgba(213,69,27,.5); }
+    50%       { box-shadow: 0 8px 48px rgba(255,155,69,.8), 0 0 0 8px rgba(213,69,27,.1); }
+}
+
+/* ===================================
+   DELIVERIES STOPPED BANNER
+=================================== */
+#deliveries-stopped-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9998;
+    background: linear-gradient(90deg, #92400e, #b45309, #d97706);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    padding: .65rem 1.25rem;
+    font-size: .88rem;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    transform: translateY(-100%);
+    transition: transform .4s cubic-bezier(.22,1,.36,1);
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+#deliveries-stopped-banner.visible {
+    transform: translateY(0);
+}
+
+#deliveries-stopped-banner button {
+    background: rgba(255,255,255,.2);
+    border: none;
+    color: white;
+    border-radius: 6px;
+    padding: .2rem .6rem;
+    font-size: .8rem;
+    cursor: pointer;
+    margin-left: .5rem;
+    font-family: inherit;
+    transition: background .2s;
+}
+
+#deliveries-stopped-banner button:hover {
+    background: rgba(255,255,255,.35);
+}
+

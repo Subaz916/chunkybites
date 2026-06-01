@@ -677,7 +677,90 @@ this.renderOrdersTable();
             if(document.getElementById('tax-rate')) document.getElementById('tax-rate').value = settings.tax_rate || '10.0';
             if(document.getElementById('delivery-enabled')) document.getElementById('delivery-enabled').value = settings.delivery_enabled || '0';
             if(document.getElementById('delivery-charge')) document.getElementById('delivery-charge').value = settings.delivery_charge || '50.0';
+            // Render store control buttons
+            this._renderStoreControls(settings.store_open || '1', settings.deliveries_stopped || '0');
         } catch (err) { this.toast(err.message, 'error'); }
+    },
+
+    _renderStoreControls(storeOpen, deliveriesStopped) {
+        const isOpen = storeOpen === '1';
+        const isStopped = deliveriesStopped === '1';
+
+        // Store toggle
+        const storeCard = document.getElementById('store-toggle-card');
+        const storeIcon = document.getElementById('store-status-icon');
+        const storeLabel = document.getElementById('store-status-label');
+        const storeBtnIcon = document.getElementById('store-btn-icon');
+        const storeBtnLabel = document.getElementById('store-btn-label');
+        const storeBtn = document.getElementById('store-toggle-btn');
+
+        if (isOpen) {
+            storeCard.className = 'sc-toggle-card store-open';
+            storeIcon.textContent = '🟢';
+            storeLabel.textContent = 'Store is OPEN';
+            storeBtnIcon.textContent = '🔒';
+            storeBtnLabel.textContent = 'Close Store';
+            storeBtn.className = 'sc-big-btn store-open-btn';
+        } else {
+            storeCard.className = 'sc-toggle-card store-closed';
+            storeIcon.textContent = '🔴';
+            storeLabel.textContent = 'Store is CLOSED';
+            storeBtnIcon.textContent = '🔓';
+            storeBtnLabel.textContent = 'Open Store';
+            storeBtn.className = 'sc-big-btn store-closed-btn';
+        }
+
+        // Delivery toggle
+        const delCard = document.getElementById('delivery-toggle-card');
+        const delIcon = document.getElementById('delivery-status-icon');
+        const delLabel = document.getElementById('delivery-status-label');
+        const delBtnIcon = document.getElementById('delivery-btn-icon');
+        const delBtnLabel = document.getElementById('delivery-btn-label');
+        const delBtn = document.getElementById('delivery-toggle-btn');
+
+        if (!isStopped) {
+            delCard.className = 'sc-toggle-card delivery-active';
+            delIcon.textContent = '🚚';
+            delLabel.textContent = 'Deliveries ACTIVE';
+            delBtnIcon.textContent = '⛔';
+            delBtnLabel.textContent = 'Stop Deliveries';
+            delBtn.className = 'sc-big-btn delivery-active-btn';
+        } else {
+            delCard.className = 'sc-toggle-card delivery-stopped';
+            delIcon.textContent = '🚫';
+            delLabel.textContent = 'Deliveries STOPPED';
+            delBtnIcon.textContent = '✅';
+            delBtnLabel.textContent = 'Resume Deliveries';
+            delBtn.className = 'sc-big-btn delivery-stopped-btn';
+        }
+    },
+
+    async toggleStore() {
+        const btn = document.getElementById('store-toggle-btn');
+        btn.disabled = true;
+        try {
+            const settings = await API.get('/settings');
+            const current = settings.store_open || '1';
+            const newVal = current === '1' ? '0' : '1';
+            await API.put('/settings', { store_open: newVal });
+            this._renderStoreControls(newVal, settings.deliveries_stopped || '0');
+            this.toast(newVal === '1' ? '🟢 Store is now OPEN!' : '🔴 Store is now CLOSED!', 'success');
+        } catch (err) { this.toast(err.message, 'error'); }
+        finally { btn.disabled = false; }
+    },
+
+    async toggleDeliveries() {
+        const btn = document.getElementById('delivery-toggle-btn');
+        btn.disabled = true;
+        try {
+            const settings = await API.get('/settings');
+            const current = settings.deliveries_stopped || '0';
+            const newVal = current === '1' ? '0' : '1';
+            await API.put('/settings', { deliveries_stopped: newVal });
+            this._renderStoreControls(settings.store_open || '1', newVal);
+            this.toast(newVal === '1' ? '⛔ Deliveries STOPPED!' : '🚚 Deliveries RESUMED!', 'success');
+        } catch (err) { this.toast(err.message, 'error'); }
+        finally { btn.disabled = false; }
     },
 
     async saveAnnouncementSettings(e) {
@@ -690,7 +773,7 @@ this.renderOrdersTable();
                 announcement_enabled: enabled,
                 announcement_text: text
             });
-            this.toast('Announcement settings saved!', 'success');
+            this.toast('Announcement settings saved! ✅', 'success');
         } catch (err) { this.toast(err.message, 'error'); }
     },
 
@@ -706,7 +789,7 @@ this.renderOrdersTable();
                 delivery_enabled: deliveryEnabled,
                 delivery_charge: deliveryCharge
             });
-            this.toast('Billing settings saved!', 'success');
+            this.toast('Billing settings saved! ✅', 'success');
         } catch (err) { this.toast(err.message, 'error'); }
     },
 

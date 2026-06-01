@@ -142,6 +142,12 @@ def init_db():
         c.execute("INSERT INTO settings (key, value) VALUES (?,?)", ('tax_rate', '10.0'))
         c.execute("INSERT INTO settings (key, value) VALUES (?,?)", ('delivery_enabled', '0'))
         c.execute("INSERT INTO settings (key, value) VALUES (?,?)", ('delivery_charge', '50.0'))
+        c.execute("INSERT INTO settings (key, value) VALUES (?,?)", ('store_open', '1'))
+        c.execute("INSERT INTO settings (key, value) VALUES (?,?)", ('deliveries_stopped', '0'))
+    # Ensure new keys exist even if old seed ran without them
+    for _key, _val in [('store_open', '1'), ('deliveries_stopped', '0')]:
+        if not c.execute("SELECT key FROM settings WHERE key = ?", (_key,)).fetchone():
+            c.execute("INSERT INTO settings (key, value) VALUES (?,?)", (_key, _val))
 
     # Seed admin user
     admin = c.execute('SELECT id FROM users WHERE email = ?', ('admin@chunky.com',)).fetchone()

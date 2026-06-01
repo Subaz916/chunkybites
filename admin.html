@@ -286,6 +286,51 @@
         <!-- ======================== SETTINGS TAB ======================== -->
         <div id="tab-settings" class="admin-tab">
             <div class="tab-header"><h2>⚙️ Settings</h2></div>
+
+            <!-- ===== STORE CONTROL BANNER ===== -->
+            <div class="store-control-banner" id="store-control-banner">
+                <div class="sc-header">
+                    <div class="sc-icon">🏪</div>
+                    <div class="sc-info">
+                        <div class="sc-title">Store Control Center</div>
+                        <div class="sc-subtitle">Manage store visibility and delivery operations in real-time</div>
+                    </div>
+                </div>
+                <div class="sc-controls">
+
+                    <!-- STORE OPEN / CLOSED TOGGLE -->
+                    <div class="sc-toggle-card" id="store-toggle-card">
+                        <div class="sc-toggle-info">
+                            <div class="sc-toggle-icon" id="store-status-icon">🟢</div>
+                            <div>
+                                <div class="sc-toggle-title" id="store-status-label">Store is OPEN</div>
+                                <div class="sc-toggle-sub">Customers can browse &amp; order</div>
+                            </div>
+                        </div>
+                        <button class="sc-big-btn store-open-btn" id="store-toggle-btn" onclick="panel.toggleStore()">
+                            <span class="sc-btn-icon" id="store-btn-icon">🔒</span>
+                            <span id="store-btn-label">Close Store</span>
+                        </button>
+                    </div>
+
+                    <!-- STOP DELIVERIES TOGGLE -->
+                    <div class="sc-toggle-card" id="delivery-toggle-card">
+                        <div class="sc-toggle-info">
+                            <div class="sc-toggle-icon" id="delivery-status-icon">🚚</div>
+                            <div>
+                                <div class="sc-toggle-title" id="delivery-status-label">Deliveries ACTIVE</div>
+                                <div class="sc-toggle-sub">Orders are being delivered</div>
+                            </div>
+                        </div>
+                        <button class="sc-big-btn delivery-active-btn" id="delivery-toggle-btn" onclick="panel.toggleDeliveries()">
+                            <span class="sc-btn-icon" id="delivery-btn-icon">⛔</span>
+                            <span id="delivery-btn-label">Stop Deliveries</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
             <div class="settings-grid">
                 <div class="card">
                     <div class="card-header"><h3>📢 Announcement Bar</h3></div>
@@ -305,7 +350,7 @@
                     </form>
                 </div>
                 <div class="card">
-                    <div class="card-header"><h3>💳 Tax & Delivery</h3></div>
+                    <div class="card-header"><h3>💳 Tax &amp; Delivery</h3></div>
                     <form id="billing-form" onsubmit="panel.saveBillingSettings(event)" style="padding:1.25rem">
                         <div class="form-group">
                             <label>Tax Rate (%)</label>
@@ -396,7 +441,7 @@
                         <select id="mi-category" required></select>
                     </div>
                     <div class="form-group">
-                        <label>Price ($) *</label>
+                        <label>Price (PKR) *</label>
                         <input type="number" step="0.01" min="0" id="mi-price" required placeholder="0.00">
                     </div>
                     <div class="form-group">
